@@ -10,10 +10,10 @@ import (
 
 func TestStress(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping stress test in short mode")
+		t.Skip("стресс-тест пропущен в режиме -short")
 	}
-	// Убери t.Skip ниже когда реализуешь generate и brute
-	t.Skip("TODO: implement stress test for p{{.P}}")
+	// TODO: убери t.Skip после реализации generate и brute
+	t.Skip("стресс-тест задачи {{.P}} не реализован")
 
 	runner.RunStressTest(t, runner.StressConfig{
 		Generate:   generate,
@@ -23,13 +23,15 @@ func TestStress(t *testing.T) {
 	})
 }
 
+// generate возвращает случайный входной тест для задачи {{.P}}.
 func generate(rng *rand.Rand) string {
-	// === Генератор случайного теста для задачи {{.P}} ===
+	// TODO: сгенерируйте случайный вход
 	_ = rng
 	return ""
 }
 
+// brute — наивное эталонное решение задачи {{.P}}.
 func brute(in io.Reader, out io.Writer) {
-	// === Наивное решение для задачи {{.P}} ===
+	// TODO: реализуйте медленное, но заведомо верное решение
 	_, _ = in, out
 }

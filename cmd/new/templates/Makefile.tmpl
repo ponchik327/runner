@@ -1,32 +1,53 @@
-# Contest workspace Makefile
-# make run P=1          — запустить задачу 1 интерактивно
-# make test P=1         — файловые тесты задачи 1
-# make test-all         — файловые тесты всех задач
-# make stress P=1       — стресс-тест задачи 1
-# make add-test P=1 ID=03  — создать пустые p1/testdata/03.in и 03.out
-# make run-test P=1 ID=01  — прогнать задачу 1 на p1/testdata/01.in
+# Воркспейс для алгоритмических задач
+#
+# Переменные:
+#   P  — номер задачи (по умолчанию 1)
+#   ID — номер теста  (по умолчанию 01)
+#
+# Команды:
+#   make run        P=1        — запустить задачу интерактивно (stdin/stdout)
+#   make test       P=1        — файловые тесты задачи
+#   make test-all              — файловые тесты всех задач
+#   make stress     P=1        — стресс-тест задачи
+#   make add-test   P=1 ID=03  — создать пустые testdata/03.in и 03.out
+#   make run-test   P=1 ID=01  — прогнать задачу на конкретном тесте
+#   make clean                 — удалить файлы failed.in из всех testdata
 
-P ?= 1
+P  ?= 1
 ID ?= 01
 
-.PHONY: run test test-all stress add-test run-test
+.PHONY: run test test-all stress add-test run-test clean
 
+# запустить решение задачи P интерактивно
 run:
 	go run ./p$(P)/
 
+# файловые тесты задачи P (все пары .in/.out из p$(P)/testdata/)
 test:
 	go test ./p$(P)/ -v -run TestSolve
 
+# файловые тесты всех задач
 test-all:
 	go test ./... -run TestSolve
 
+# стресс-тест задачи P: сравнивает brute и optimized на случайных данных
 stress:
 	go test ./p$(P)/ -v -run TestStress -count=1 -timeout 300s
 
+# создать пустые файлы p$(P)/testdata/$(ID).in и $(ID).out
 add-test:
 	@mkdir -p p$(P)/testdata
 	@touch p$(P)/testdata/$(ID).in p$(P)/testdata/$(ID).out
-	@echo "Created p$(P)/testdata/$(ID).in and p$(P)/testdata/$(ID).out"
+	@echo "Создано: p$(P)/testdata/$(ID).in и p$(P)/testdata/$(ID).out"
 
+# запустить задачу P на тесте ID и показать вход и выход рядом
 run-test:
-	go run ./p$(P)/ < p$(P)/testdata/$(ID).in
+	@echo "=== Вход (p$(P)/testdata/$(ID).in) ==="
+	@cat p$(P)/testdata/$(ID).in
+	@echo "=== Выход ==="
+	@go run ./p$(P)/ < p$(P)/testdata/$(ID).in
+
+# удалить файлы failed.in, оставшиеся после стресс-тестов
+clean:
+	@find . -name "failed.in" -delete
+	@echo "failed.in файлы удалены"

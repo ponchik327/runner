@@ -12,15 +12,16 @@ import (
 //go:embed templates
 var templateFS embed.FS
 
+// templateData — данные, передаваемые в каждый шаблон при генерации.
 type templateData struct {
-	Module string // имя модуля воркспейса, напр. "contest"
+	Module string // имя Go-модуля воркспейса, напр. "contest"
 	P      int    // номер задачи
 }
 
 func main() {
-	problems := flag.Int("p", 7, "number of problems")
-	dir := flag.String("dir", "contest", "output directory name")
-	mod := flag.String("mod", "contest", "Go module name for the workspace go.mod")
+	problems := flag.Int("p", 7, "количество задач")
+	dir := flag.String("dir", "contest", "имя создаваемой директории")
+	mod := flag.String("mod", "contest", "имя Go-модуля в go.mod воркспейса")
 	flag.Parse()
 
 	if err := os.MkdirAll(*dir, 0o755); err != nil {
@@ -28,6 +29,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	// render читает шаблон из embed.FS, применяет data и записывает результат в dst.
 	render := func(tmplName, dst string, data any) {
 		content, err := templateFS.ReadFile("templates/" + tmplName)
 		if err != nil {
@@ -61,10 +63,10 @@ func main() {
 		render("main_test.go.tmpl", filepath.Join(pdir, "main_test.go"), pd)
 		render("stress_test.go.tmpl", filepath.Join(pdir, "stress_test.go"), pd)
 
-		// .gitkeep чтобы пустая директория попала в git
+		// .gitkeep нужен чтобы пустая директория попала в git
 		os.WriteFile(filepath.Join(pdir, "testdata", ".gitkeep"), nil, 0o644)
 	}
 
-	fmt.Printf("Created contest workspace in ./%s/\n", *dir)
-	fmt.Printf("Next steps:\n  cd %s\n  go mod tidy\n  make test P=1\n", *dir)
+	fmt.Printf("Воркспейс создан в ./%s/\n", *dir)
+	fmt.Printf("Следующие шаги:\n  cd %s\n  go mod tidy\n  make test P=1\n", *dir)
 }

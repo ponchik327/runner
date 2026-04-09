@@ -1,4 +1,4 @@
-// Package runner provides utilities for testing competitive programming solutions.
+// Пакет runner предоставляет утилиты для тестирования решений алгоритмических задач.
 package runner
 
 import (
@@ -12,15 +12,15 @@ import (
 	"testing"
 )
 
+// максимальная длина вывода при отображении в ошибке теста
 const maxOutputLen = 2000
 
-// RunFileTests runs all tests found in testdataDir.
-// It discovers pairs of NN.in / NN.out files, feeds each .in to solve,
-// and compares the output with the corresponding .out file.
-// Output is normalized by trimming leading/trailing whitespace before comparison.
-// If a .in file has no matching .out file, the solution is run and its output
-// is printed with a "no expected output" notice — useful for quickly inspecting
-// output on a new test case without creating the .out file first.
+// RunFileTests запускает все тесты из директории testdataDir.
+// Ищет пары файлов NN.in / NN.out, подаёт каждый .in в solve
+// и сравнивает результат с соответствующим .out.
+// Вывод нормализуется перед сравнением: обрезается trailing whitespace и \r\n.
+// Если файл .out отсутствует — решение запускается и вывод печатается без сравнения,
+// что удобно для быстрой проверки на новом тесте.
 func RunFileTests(t *testing.T, solve func(in io.Reader, out io.Writer), testdataDir string) {
 	t.Helper()
 
@@ -81,6 +81,9 @@ func RunFileTests(t *testing.T, solve func(in io.Reader, out io.Writer), testdat
 	}
 }
 
+// normalize приводит строку к нормализованному виду:
+// заменяет \r\n на \n, обрезает trailing whitespace на каждой строке
+// и убирает leading/trailing пустые строки.
 func normalize(s string) string {
 	lines := strings.Split(strings.ReplaceAll(s, "\r\n", "\n"), "\n")
 	for i, l := range lines {
@@ -89,6 +92,7 @@ func normalize(s string) string {
 	return strings.TrimSpace(strings.Join(lines, "\n"))
 }
 
+// truncate обрезает строку до maxOutputLen символов и добавляет пометку об усечении.
 func truncate(s string) string {
 	if len(s) <= maxOutputLen {
 		return s
@@ -96,6 +100,7 @@ func truncate(s string) string {
 	return fmt.Sprintf("%s\n... (truncated, %d total chars)", s[:maxOutputLen], len(s))
 }
 
+// firstDiff возвращает номер первой отличающейся строки и её содержимое в want и got.
 func firstDiff(want, got string) (lineNum int, wantLine, gotLine string) {
 	wantLines := strings.Split(want, "\n")
 	gotLines := strings.Split(got, "\n")

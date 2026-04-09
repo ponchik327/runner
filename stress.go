@@ -11,37 +11,37 @@ import (
 	"time"
 )
 
-// StressConfig holds the configuration for a stress test run.
+// StressConfig содержит параметры стресс-теста.
 type StressConfig struct {
-	// Generate produces a random test case as a string given an rng source.
+	// Generate генерирует случайный входной тест в виде строки.
 	Generate func(rng *rand.Rand) string
 
-	// BruteForce is the slow but obviously correct reference solution.
+	// BruteForce — медленное, но заведомо верное эталонное решение.
 	BruteForce func(in io.Reader, out io.Writer)
 
-	// Optimized is the fast solution being verified.
+	// Optimized — быстрое решение, которое проверяется.
 	Optimized func(in io.Reader, out io.Writer)
 
-	// NumTests is the number of random test cases to run. Defaults to 1000.
+	// NumTests — количество случайных тестов. По умолчанию 1000.
 	NumTests int
 
-	// Seed is the RNG seed. Use 0 for a random seed derived from the current time.
+	// Seed — начальное значение генератора случайных чисел.
+	// При значении 0 используется текущее время.
 	Seed int64
 
-	// TimeLimit is the per-test time limit applied to Optimized only.
-	// Defaults to 2 seconds.
+	// TimeLimit — лимит времени на один тест для Optimized.
+	// По умолчанию 2 секунды.
 	TimeLimit time.Duration
 
-	// TestdataDir is where failed.in is written on failure.
-	// Defaults to "testdata" relative to the test working directory.
+	// TestdataDir — директория, куда сохраняется failed.in при падении.
+	// По умолчанию "testdata".
 	TestdataDir string
 }
 
-// RunStressTest runs a stress test according to cfg.
-// It generates NumTests random inputs, runs both BruteForce and Optimized,
-// and compares their outputs. On the first mismatch (WRONG ANSWER) or
-// timeout (TLE), it fails the test with full details and saves the
-// failing input to testdata/failed.in for easy reproduction.
+// RunStressTest запускает стресс-тест согласно cfg.
+// Генерирует NumTests случайных входов, прогоняет BruteForce и Optimized,
+// сравнивает их вывод. При первом расхождении (WRONG ANSWER) или превышении
+// лимита времени (TLE) тест падает и сохраняет проблемный вход в failed.in.
 func RunStressTest(t *testing.T, cfg StressConfig) {
 	t.Helper()
 
@@ -91,6 +91,7 @@ func RunStressTest(t *testing.T, cfg StressConfig) {
 	}
 }
 
+// saveFailedInput сохраняет проблемный входной тест в dir/failed.in.
 func saveFailedInput(t *testing.T, dir, input string) {
 	t.Helper()
 
