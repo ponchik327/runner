@@ -1,0 +1,11 @@
+package main
+
+import (
+	"testing"
+
+	"github.com/ponchik327/runner"
+)
+
+func TestSolve(t *testing.T) {
+	runner.RunFileTests(t, solve, "testdata")
+}

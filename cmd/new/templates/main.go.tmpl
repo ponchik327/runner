@@ -1,0 +1,23 @@
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"io"
+	"os"
+)
+
+func solve(in io.Reader, out io.Writer) {
+	// === Здесь пишите решение задачи {{.P}} ===
+	// Читайте из in (fmt.Fscan(in, &n)), пишите в out (fmt.Fprintln(out, ans))
+	r := bufio.NewReader(in)
+	_ = r
+	_ = fmt.Sprintf // убрать после написания решения
+}
+
+func main() {
+	in := bufio.NewReader(os.Stdin)
+	out := bufio.NewWriter(os.Stdout)
+	defer out.Flush()
+	solve(in, out)
+}

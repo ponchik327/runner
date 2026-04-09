@@ -1,0 +1,32 @@
+# Contest workspace Makefile
+# make run P=1          — запустить задачу 1 интерактивно
+# make test P=1         — файловые тесты задачи 1
+# make test-all         — файловые тесты всех задач
+# make stress P=1       — стресс-тест задачи 1
+# make add-test P=1 ID=03  — создать пустые p1/testdata/03.in и 03.out
+# make run-test P=1 ID=01  — прогнать задачу 1 на p1/testdata/01.in
+
+P ?= 1
+ID ?= 01
+
+.PHONY: run test test-all stress add-test run-test
+
+run:
+	go run ./p$(P)/
+
+test:
+	go test ./p$(P)/ -v -run TestSolve
+
+test-all:
+	go test ./... -run TestSolve
+
+stress:
+	go test ./p$(P)/ -v -run TestStress -count=1 -timeout 300s
+
+add-test:
+	@mkdir -p p$(P)/testdata
+	@touch p$(P)/testdata/$(ID).in p$(P)/testdata/$(ID).out
+	@echo "Created p$(P)/testdata/$(ID).in and p$(P)/testdata/$(ID).out"
+
+run-test:
+	go run ./p$(P)/ < p$(P)/testdata/$(ID).in
