@@ -19,7 +19,7 @@ type templateData struct {
 }
 
 func main() {
-	problems := flag.Int("p", 7, "количество задач")
+	problems := flag.Int("p", 1, "количество задач")
 	dir := flag.String("dir", "contest", "имя создаваемой директории")
 	mod := flag.String("mod", "contest", "имя Go-модуля в go.mod воркспейса")
 	flag.Parse()
